@@ -7,6 +7,17 @@ RSpec.describe TTY::Spinner, '#update' do
     spinner = TTY::Spinner.new(":title :spinner", output: output, interval: 100)
     spinner.update(title: 'task')
     5.times { spinner.spin }
+    output.rewind
+    expect(output.read).to eq([
+      "\e[1Gtask |",
+      "\e[1Gtask /",
+      "\e[1Gtask -",
+      "\e[1Gtask \\",
+      "\e[1Gtask |",
+    ].join)
+
+    spinner.update(title: 'TEEEST')
+    5.times { spinner.spin }
     spinner.stop('done')
     output.rewind
     expect(output.read).to eq([
@@ -15,7 +26,12 @@ RSpec.describe TTY::Spinner, '#update' do
       "\e[1Gtask -",
       "\e[1Gtask \\",
       "\e[1Gtask |",
-      "\e[1Gtask | done\n"
+      "\e[TEEEST '|",
+      "\e[TEEEST /",
+      "\e[TEEEST -",
+      "\e[TEEEST \\",
+      "\e[TEEEST |",
+      "\e[TEEEST | done\n",
     ].join)
   end
 
